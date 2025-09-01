@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Caro Realtime</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div id="app">
+
+    <!-- LOBBY / LOGIN -->
+    <div id="lobby" class="login-box">
+      <h1>✖️⭕ </h1>
+      <p class="muted">Làm tí caro không bồ?</p>
+
+      <label>Tên của bạn</label>
+      <input id="playerNameInput" type="text" placeholder="Tên dài trên 2 kí tự" maxlength="20">
+
+      <label>Mã phòng (để trống để tạo mới)</label>
+      <input id="roomInput" type="text" placeholder="room123" maxlength="20">
+
+      <div class="row">
+        <button id="btnCreate" class="btn primary">Tạo phòng✖️</button>
+        <button id="btnJoin" class="btn">Tham gia⭕</button>
+      </div>
+
+      <div id="lobbyNotice" class="muted small">Kết nối tới server: <span id="connStatus">chưa</span></div>
+      <div id="lobbyError" class="error" style="display:none"></div>
+    </div>
+
+    <!-- GAME SCREEN -->
+    <div id="game" class="hidden">
+      <div class="topbar">
+        <div class="left">
+          <div><strong>Phòng:</strong> <span id="roomLabel"></span></div>
+          <div><strong>Bạn:</strong> <span id="meLabel"></span> — <span id="meSide"></span></div>
+        </div>
+        <div class="right">
+          <div id="statusText">Chưa vào phòng</div>
+          <button id="btnLeave" class="btn small ghost">Rời phòng</button>
+        </div>
+      </div>
+
+      <div class="layout">
+        <div class="board-area">
+          <div id="caroBoard" class="caro-board" role="grid" aria-label="Bàn cờ"></div>
+
+          <div class="controls">
+            <button id="btnRematch" class="btn small">Yêu cầu chơi lại</button>
+            <button id="btnReset" class="btn small ghost">Reset (dev)</button>
+          </div>
+        </div>
+
+        <div class="chat-area">
+          <div class="chat-header">
+            <strong>Chat phòng</strong>
+            <div id="chatConn" class="muted small">Kết nối...</div>
+          </div>
+
+          <div id="chatMessages" class="chat-messages"></div>
+
+          <div class="typing muted small" id="typingIndicator" style="display:none"></div>
+
+          <div class="chat-input">
+            <input id="chatInput" placeholder="Nhập tin nhắn..." maxlength="300">
+            <button id="sendBtn" class="btn">Gửi</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Socket.io client served by server -->
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="script.js"></script>
+  <script src="style.css"></script>
+</body>
+</html>

@@ -1,0 +1,401 @@
+:root {
+  --bg1: hsl(216, 100%, 54%);
+  --bg2: #fd1deb;
+  --panel: #ffffff;
+  --muted: #7f8c8d;
+  --accent: #764ba2;
+  --board-size: 640px;
+  --grid-size: 15;
+}
+
+
+.loginContainer {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  animation: fadeIn 1s ease-in-out;
+}
+
+@keyframes fadeInBg {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes gradientFlow {
+  0%   { background-position: 0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.login-box {
+  background: white;
+  padding: 40px;
+  border-radius: 20px;
+  box-shadow: 0 15px 40px rgba(0,0,0,0.2);
+  text-align: center;
+  animation: zoomIn 0.4s ease;
+}
+@keyframes zoomIn {
+  from { transform: scale(0.8); opacity: 0; }
+  to   { transform: scale(1); opacity: 1; }
+}
+
+.login-box h2 {
+  margin-bottom: 20px;
+  color: #2c3e50;
+  font-weight: 600;
+}
+
+.login-box input {
+  width: 100%;
+  padding: 12px 15px;
+  margin: 10px 0;
+  border: 2px solid #e0e6ed;
+  border-radius: 12px;
+  transition: all 0.3s ease;
+  font-size: 1rem;
+}
+.login-box input:hover {
+  border-color: #667eea;
+  cursor: text;
+}
+.login-box input:focus {
+  outline: none;
+  border-color: #764ba2;
+  box-shadow: 0 0 0 4px rgba(118, 75, 162, 0.15);
+}
+
+.login-box button {
+  margin-top: 15px;
+  padding: 12px 20px;
+  border: none;
+  border-radius: 25px;
+  font-size: 1rem;
+  font-weight: 600;
+  color: white;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.login-box button:hover {
+  transform: translateY(-3px) scale(1.03);
+  box-shadow: 0 6px 16px rgba(102,126,234,0.3);
+}
+
+.login-box button:active {
+  transform: scale(0.97);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+}
+button.loading {
+  cursor: wait;
+  opacity: 0.7;
+}
+.login-box .error,
+.login-box .success {
+  margin-top: 10px;
+  font-size: 0.9rem;
+  animation: blink 1s ease-in-out infinite alternate;
+}
+
+@keyframes blink {
+  from { opacity: 0.6; }
+  to   { opacity: 1; }
+}
+/* Basic */
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: Inter, "Segoe UI", Arial, sans-serif;
+  background: linear-gradient(135deg, var(--bg1), var(--bg2));
+  background-size: 600% 600%;
+  min-height: 100vh;
+  margin: 0;
+  color: #222;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 28px;
+  animation: gradientMove 12s ease infinite;
+}
+
+@keyframes gradientMove {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* Card */
+.card {
+  width: 100%;
+  max-width: 760px;
+  background: var(--panel);
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 18px 40px rgba(0,0,0,0.25);
+}
+.center { text-align:center; }
+.muted { color: var(--muted); }
+.small { font-size:12px; }
+
+/* Inputs/buttons */
+label { display:block; text-align:left; margin-top:10px; font-weight:600; }
+input[type="text"], input[type="search"] {
+  width:100%;
+  padding:10px 12px;
+  border-radius:8px;
+  border:1px solid #e6e6e6;
+  margin-top:8px;
+  font-size:14px;
+}
+.row { display:flex; gap:10px; margin-top:12px; }
+.btn {
+  border:0; padding:10px 14px; border-radius:8px; cursor:pointer; background:#eee; color:#222;
+  font-weight:700; transition:all .12s;
+}
+.btn.primary { background: linear-gradient(90deg,var(--accent), #6f6bdc); color:white; }
+.btn.small { padding:6px 10px; font-size:13px; border-radius:6px; }
+.btn.ghost { background:transparent; border:1px solid #ddd; }
+.btn:hover { transform: translateY(-3px); box-shadow:0 8px 18px rgba(0,0,0,0.12); }
+
+/* Utilities */
+.hidden { display:none; }
+.error { color: #e74c3c; margin-top:8px; }
+
+/* Game layout */
+#game { width:100%; max-width:1100px; color:#222; }
+.topbar { display:flex; justify-content:space-between; align-items:center; padding:12px 18px; background:var(--panel); border-radius:10px; }
+.layout { display:flex; gap:18px; margin-top:12px; align-items:flex-start; }
+
+/* Board area */
+.board-area { flex:1; display:flex; flex-direction:column; align-items:center; gap:10px; }
+.caro-board {
+  width: var(--board-size);
+  height: var(--board-size);
+  background: linear-gradient(180deg,#f1e9d6,#fffdf6);
+  border-radius:10px;
+  display:grid;
+  grid-template-columns: repeat(var(--grid-size), 1fr);
+  grid-template-rows: repeat(var(--grid-size), 1fr);
+  gap:3px;
+  padding:8px;
+  box-shadow:0 8px 20px rgba(0,0,0,0.12);
+  touch-action: manipulation;
+  user-select:none;
+}
+.caro-cell {
+  background: #fff;
+  border-radius:4px;
+  display:flex; align-items:center; justify-content:center;
+  font-size: calc(var(--board-size) / var(--grid-size) * 0.5);
+  font-weight:800; cursor:pointer; transition:all .12s;
+  position:relative;
+}
+.caro-cell::after {
+  content:''; position:absolute; inset:0; border-top:1px solid #c5b89a; border-left:1px solid #c5b89a; pointer-events:none;
+}
+.caro-cell.row-first::after { border-top:none }
+.caro-cell.col-first::after { border-left:none }
+.caro-cell:hover { transform: translateY(-3px); background: rgba(118,75,162,0.06); }
+.caro-cell[data-value="X"] { color:#d63031; }
+.caro-cell[data-value="O"] { color:#2c3e50; }
+.caro-cell.last-move::before {
+  content:''; position:absolute; inset:4px; border-radius:6px; background: rgba(59,169,212,0.12); pointer-events:none;
+}
+.caro-cell.win { background: linear-gradient(90deg, rgba(255,193,7,0.14), rgba(255,193,7,0.08)); box-shadow:0 8px 30px rgba(255,193,7,0.12); transform:scale(1.03); }
+
+/* Controls */
+.controls { display:flex; gap:8px; margin-top:10px; }
+
+/* Chat */
+.chat-area { width:360px; display:flex; flex-direction:column; gap:8px; }
+.chat-header { display:flex; justify-content:space-between; align-items:center; padding:6px 8px; background:var(--panel); border-radius:6px; border:1px solid #eee; }
+.chat-messages { height:480px; overflow:auto; background:#fafafa; border-radius:8px; padding:10px; border:1px solid #eee; display:flex; flex-direction:column; gap:8px; }
+.message { max-width:85%; padding:8px 12px; border-radius:12px; font-size:14px; }
+.msg-system { text-align:center; color:var(--muted); font-style:italic; }
+.msg-own { margin-left:auto; background:linear-gradient(90deg,#f6d365,#fda085); }
+.msg-other { margin-right:auto; background:#fff; border:1px solid #eee; }
+.chat-input { display:flex; gap:8px; margin-top:6px; }
+.chat-input input { flex:1; padding:8px 10px; border-radius:8px; border:1px solid #e6e6e6; }
+/* Con trỏ */
+.caro-cell {
+  cursor: pointer;
+  transition: transform 0.15s ease, background 0.2s ease;
+}
+
+/* Hiệu ứng hover */
+.caro-cell:hover {
+  transform: translateY(-4px) scale(1.05);
+  background: rgba(118,75,162,0.12);
+  box-shadow: 0 6px 14px rgba(0,0,0,0.15);
+}
+
+/* Animation khi xuất hiện X hoặc O */
+.caro-cell[data-value="X"], 
+.caro-cell[data-value="O"] {
+  animation: popIn 0.25s ease-out;
+}
+
+@keyframes popIn {
+  0% { transform: scale(0.4) rotate(-20deg); opacity: 0; }
+  60% { transform: scale(1.15) rotate(5deg); opacity: 1; }
+  100% { transform: scale(1) rotate(0); }
+}
+
+/* Animation highlight ô thắng */
+.caro-cell.win {
+  animation: winPulse 1.2s ease-in-out infinite;
+}
+
+@keyframes winPulse {
+  0%   { box-shadow: 0 0 0 rgba(255,193,7,0.0); }
+  50%  { box-shadow: 0 0 18px rgba(255,193,7,0.7); }
+  100% { box-shadow: 0 0 0 rgba(255,193,7,0.0); }
+}
+
+/* Hiệu ứng chat message xuất hiện */
+.message {
+  animation: fadeSlideIn 0.25s ease;
+}
+
+@keyframes fadeSlideIn {
+  from { transform: translateY(10px); opacity: 0; }
+  to   { transform: translateY(0); opacity: 1; }
+}
+
+/* Responsive */
+@media (max-width:980px) {
+  :root { --board-size: 420px; }
+  .layout { flex-direction:column; align-items:center; }
+  .chat-area { width:100%; }
+}
+
+
+/* Animation container xuất hiện */
+@keyframes slideIn {
+  0% { transform: translateY(-30px); opacity: 0; }
+  100% { transform: translateY(0); opacity: 1; }
+}
+
+/* Tiêu đề login */
+.login-container h2 {
+  margin-bottom: 20px;
+  color: #4A3AFF;
+  font-size: 1.8rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+  animation: fadeInDown 0.8s ease;
+}
+
+@keyframes fadeInDown {
+  from { opacity: 0; transform: translateY(-20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Input */
+.login-container input {
+  width: 100%;
+  padding: 12px 16px;
+  margin: 12px 0;
+  border: 2px solid #e0e6ed;
+  border-radius: 12px;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  cursor: text;
+}
+
+.login-container input:focus {
+  outline: none;
+  border-color: #764ba2;
+  box-shadow: 0 0 0 3px rgba(118, 75, 162, 0.15);
+  transform: scale(1.02);
+}
+
+/* Button */
+.login-container button {
+  margin-top: 15px;
+  width: 100%;
+  padding: 14px;
+  border: none;
+  border-radius: 30px;
+  font-size: 1rem;
+  font-weight: 600;
+  color: white;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.login-container button:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(118, 75, 162, 0.3);
+}
+
+.login-container button:active {
+  transform: scale(0.97);
+}
+
+/* Link phụ (nếu có) */
+.login-container a {
+  display: inline-block;
+  margin-top: 15px;
+  font-size: 0.9rem;
+  color: #764ba2;
+  text-decoration: none;
+  cursor: pointer;
+  transition: color 0.3s;
+}
+
+.login-container a:hover {
+  color: #4A3AFF;
+  text-decoration: underline;
+  transform: scale(1.05);
+}
+
+/* Hiệu ứng ripple cho button */
+.btn, .login-box button {
+  position: relative;
+  overflow: hidden;
+}
+.btn::after, .login-box button::after {
+  content: "";
+  position: absolute;
+  border-radius: 50%;
+  transform: scale(0);
+  width: 100px;
+  height: 100px;
+  opacity: 0.4;
+  background: white;
+  pointer-events: none;
+  animation: none;
+}
+.btn:active::after, .login-box button:active::after {
+  animation: ripple 0.6s linear;
+}
+@keyframes ripple {
+  from { transform: scale(0); opacity: 0.6; }
+  to   { transform: scale(4); opacity: 0; }
+}
+
+/* Hiệu ứng chat message bounce nhẹ */
+.message {
+  animation: fadeSlideIn 0.25s ease, bounceIn 0.4s ease;
+}
+@keyframes bounceIn {
+  0%   { transform: scale(0.9); }
+  50%  { transform: scale(1.05); }
+  100% { transform: scale(1); }
+}
+
+/* Bàn cờ xuất hiện */
+.caro-board {
+  animation: boardAppear 0.6s ease-out;
+}
+@keyframes boardAppear {
+  from { transform: scale(0.9); opacity: 0; }
+  to   { transform: scale(1); opacity: 1; }
+}
