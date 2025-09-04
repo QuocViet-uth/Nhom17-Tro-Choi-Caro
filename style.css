@@ -8,7 +8,6 @@
   --grid-size: 15;
 }
 
-
 .loginContainer {
   display: flex;
   flex-direction: column;
@@ -41,6 +40,38 @@
 @keyframes zoomIn {
   from { transform: scale(0.8); opacity: 0; }
   to   { transform: scale(1); opacity: 1; }
+}
+.bounce {
+  display: inline-block;
+  animation: bounce 1s infinite alternate;
+}
+
+@keyframes bounce {
+  from { transform: translateY(0); }
+  to { transform: translateY(-12px); }
+}
+
+label {
+  display: block;
+  margin: 8px 0 4px;
+  font-weight: bold;
+  opacity: 0;
+  transform: translateY(10px);
+  animation: labelFade 0.6s ease forwards;
+}
+
+label:nth-of-type(1) {
+  animation-delay: 0.1s;
+}
+label:nth-of-type(2) {
+  animation-delay: 0.3s;
+}
+
+@keyframes labelFade {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .login-box h2 {
@@ -105,7 +136,7 @@ button.loading {
   from { opacity: 0.6; }
   to   { opacity: 1; }
 }
-/* Basic */
+
 * { box-sizing: border-box; }
 body {
   margin: 0;
@@ -129,7 +160,6 @@ body {
   100% { background-position: 0% 50%; }
 }
 
-/* Card */
 .card {
   width: 100%;
   max-width: 760px;
@@ -142,7 +172,6 @@ body {
 .muted { color: var(--muted); }
 .small { font-size:12px; }
 
-/* Inputs/buttons */
 label { display:block; text-align:left; margin-top:10px; font-weight:600; }
 input[type="text"], input[type="search"] {
   width:100%;
@@ -221,6 +250,73 @@ input[type="text"], input[type="search"] {
 .msg-other { margin-right:auto; background:#fff; border:1px solid #eee; }
 .chat-input { display:flex; gap:8px; margin-top:6px; }
 .chat-input input { flex:1; padding:8px 10px; border-radius:8px; border:1px solid #e6e6e6; }
+/* Rematch Box Styles */
+.rematch-box {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: #fff;
+  border: 2px solid #764ba2;
+  border-radius: 10px;
+  padding: 15px 20px;
+  width: 260px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+  z-index: 1500;
+  animation: slideUp 0.3s ease;
+}
+
+.rematch-box.hidden {
+  display: none;
+}
+
+.rematch-box p {
+  margin: 0 0 10px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #333;
+}
+
+.rematch-buttons {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.rematch-buttons .btn {
+  flex: 1;
+  padding: 6px 10px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.rematch-buttons .btn.accept {
+  background: #4CAF50;
+  color: white;
+}
+
+.rematch-buttons .btn.accept:hover {
+  background: #45a049;
+}
+
+.rematch-buttons .btn.decline {
+  background: #f44336;
+  color: white;
+}
+
+.rematch-buttons .btn.decline:hover {
+  background: #d32f2f;
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+
 /* Con trỏ */
 .caro-cell {
   cursor: pointer;
@@ -398,4 +494,22 @@ input[type="text"], input[type="search"] {
 @keyframes boardAppear {
   from { transform: scale(0.9); opacity: 0; }
   to   { transform: scale(1); opacity: 1; }
+}
+#music-controls {
+  position: fixed;
+  top: 10px;
+  right: 10px;
+  padding: 4px 6px;
+  color: white;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  z-index: 9999;
+}
+
+#volume-control {
+  width: 120px;
+  cursor: pointer;
+  accent-color: #ffffff; /* đổi màu thanh kéo (hồng neon) */
 }
