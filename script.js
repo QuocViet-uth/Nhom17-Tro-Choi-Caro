@@ -1,8 +1,4 @@
-// script.js - Caro realtime client (socket.io)
-// Client implements: create/join room, render board, click -> emit 'move', chat send
-
 const GRID = 15;
-
 // DOM refs
 const lobby = document.getElementById('lobby');
 const game = document.getElementById('game');
@@ -28,6 +24,10 @@ const sendBtn = document.getElementById('sendBtn');
 const typingIndicator = document.getElementById('typingIndicator');
 const chatConn = document.getElementById('chatConn');
 
+const rematchBox = document.getElementById('rematchBox');
+const rematchMsg = document.getElementById('rematchMsg');
+const btnAcceptRematch = document.getElementById('btnAcceptRematch');
+const btnDeclineRematch = document.getElementById('btnDeclineRematch');
 // State
 let socket;
 let playerName = '';
@@ -38,7 +38,7 @@ let lastMove = null;
 let isMyTurn = false;
 let typingTimeout = null;
 
-// Create board cells
+// Tạo bàn cờ
 function createBoardUI() {
   caroBoard.innerHTML = '';
   document.documentElement.style.setProperty('--grid-size', GRID);
@@ -76,7 +76,7 @@ function connect() {
     chatConn.textContent = 'Mất kết nối';
   });
 
-  // chat history and messages
+  // lịch sử chat và tin nhắn
   socket.on('chatHistory', (msgs) => {
     msgs.forEach(m => appendChat(m));
   });
@@ -99,13 +99,13 @@ function connect() {
     renderBoard();
     roomLabel.textContent = state.room;
     meLabel.textContent = playerName;
-    // determine side by name match
+    // Chia phe
     if (state.players && state.players.X === playerName) playerSide = 1;
     else if (state.players && state.players.O === playerName) playerSide = 2;
     else playerSide = 0;
     meSide.textContent = playerSide === 1 ? 'X (✖)' : (playerSide === 2 ? 'O (◯)' : 'Khán giả');
 
-    // set turn
+    // xác định lượt
     if (state.winner && state.winner !== 0) {
       if (state.winner === 3) statusText.textContent = 'Hòa!';
       else statusText.textContent = `${state.winner === 1 ? 'X' : 'O'} thắng!`;
@@ -132,25 +132,53 @@ function connect() {
   });
 
   socket.on('rematchRequested', (data) => {
+    if (data.playerName === playerName) {
+      return;
+  }
     appendChat({ sender: 'system', content: `${data.playerName} đã yêu cầu chơi lại.`, timestamp: new Date().toISOString(), type: 'system' });
+  rematchMsg.textContent = `${data.playerName} muốn chơi lại, bạn có đồng ý không?`;
+  rematchBox.style.display = 'block';
+  if (data.playerName !== playerName) {
+    rematchMsg.textContent = `${data.playerName} muốn chơi lại, bạn có đồng ý không?`;
+    rematchBox.classList.remove('hidden');
+    }
   });
+  // Người chơi bấm chấp nhận
+  btnAcceptRematch.addEventListener('click', () => {
+    socket.emit('acceptRematch', { room: roomCode, playerName });
+    rematchBox.style.display = 'none';
+});
+
   socket.on('rematchAccepted', () => {
     appendChat({ sender: 'system', content: 'Rematch: Đã đồng ý', timestamp: new Date().toISOString(), type: 'system' });
   });
-
-  socket.on('resetBoard', (data) => {
-    boardState = data.board.slice();
-    lastMove = data.lastMove || null;
-    renderBoard();
-    statusText.textContent = 'Bàn đã reset';
+btnDeclineRematch.addEventListener('click', () => {
+  socket.emit('declineRematch', { room: roomCode, playerName });
+  rematchBox.style.display = 'none';
+});
+  socket.on('rematchDeclined', () => {
+    appendChat({ sender: 'system', content: 'Rematch: Đã từ chối', timestamp: new Date().toISOString(), type: 'system' });
   });
+
+socket.on('resetBoard', (data) => {
+  boardState = data.board.slice();
+  lastMove = null;
+  renderBoard();
+  rematchBox.style.display = 'none';
+});
+socket.on('rematchDeclined', (data) => {
+  appendChat({ sender: 'system', content: `${data.playerName} đã từ chối chơi lại.`, timestamp: new Date().toISOString(), type: 'system'
+    
+  });
+  rematchBox.classList.add('hidden');
+});
 
   socket.on('gameOverDisconnect', () => {
     appendChat({ sender: 'system', content: 'Đối thủ đã rời. Bạn thắng.', timestamp: new Date().toISOString(), type: 'system' });
   });
 }
 
-// UI handlers: create/join
+// UI tạo/tham gia phòng
 btnCreate.addEventListener('click', () => {
   const name = playerNameInput.value.trim();
   let room = roomInput.value.trim();
@@ -188,12 +216,12 @@ function enterGame() {
   statusText.textContent = 'Chờ cập nhật phòng từ server...';
 }
 
-// board click
+// thao tác nhấn
 function onCellClick(e) {
   const el = e.currentTarget;
   const r = parseInt(el.dataset.r, 10);
   const c = parseInt(el.dataset.c, 10);
-  // checks
+  // kiểm tra
   if (!socket || !socket.connected) {
     appendChat({ sender: 'system', content: 'Không có kết nối', timestamp: new Date().toISOString(), type: 'system' });
     return;
@@ -202,11 +230,10 @@ function onCellClick(e) {
     appendChat({ sender: 'system', content: 'Bạn là khán giả, không thể đánh', timestamp: new Date().toISOString(), type: 'system' });
     return;
   }
-  // send move (server validates)
   socket.emit('move', { room: roomCode, row: r, col: c, player: playerSide });
 }
 
-// render board from boardState
+// render board
 function renderBoard() {
   for (let i = 0; i < GRID * GRID; i++) {
     const cell = caroBoard.children[i];
@@ -221,7 +248,6 @@ function renderBoard() {
   }
 }
 
-// highlight win
 function highlightWin(cells) {
   cells.forEach(p => {
     const idx = p.r * GRID + p.c;
@@ -233,7 +259,6 @@ function highlightWin(cells) {
 sendBtn.addEventListener('click', sendChat);
 chatInput.addEventListener('keypress', (e) => {
   if (e.key === 'Enter') sendChat();
-  // typing indicator
   if (socket && socket.connected) {
     socket.emit('typing', { room: roomCode, user: playerName, isTyping: true });
     if (typingTimeout) clearTimeout(typingTimeout);
@@ -254,7 +279,6 @@ function sendChat() {
   chatInput.value = '';
 }
 
-// append chat message element
 function appendChat(m) {
   const div = document.createElement('div');
   if (m.type === 'system' || m.sender === 'system') {
@@ -280,17 +304,14 @@ btnRematch.addEventListener('click', () => {
   socket.emit('requestRematch', { room: roomCode, playerName });
   appendChat({ sender: 'system', content: 'Đã gửi yêu cầu chơi lại', timestamp: new Date().toISOString(), type: 'system' });
 });
-btnReset.addEventListener('click', () => {
-  if (socket && socket.connected) socket.emit('forceReset', { room: roomCode });
-});
+
 btnLeave.addEventListener('click', () => {
   if (socket && socket.connected) socket.emit('leaveRoom', { room: roomCode, playerName });
   location.reload();
 });
 
-// create board UI on load
+// tạo UI bàn cờ
 function init() {
-  // create GRID cells
   caroBoard.innerHTML = '';
   for (let r = 0; r < GRID; r++) {
     for (let c = 0; c < GRID; c++) {
@@ -305,5 +326,27 @@ function init() {
   }
   connect();
 }
+const backgroundAudio = document.getElementById('background-audio');
+const volumeControl = document.getElementById('volume-control');
 
+backgroundAudio.volume = 0.2;
+document.addEventListener('click', () => {
+    if (backgroundAudio.paused) {
+        backgroundAudio.play().catch(error => {
+            console.error("Lỗi khi phát nhạc:", error);
+        });
+    }
+}, { once: false });
+
+volumeControl.addEventListener('input', (e) => {
+    backgroundAudio.volume = e.target.value / 100;
+});
+const playBotBtn = document.getElementById('playBotBtn');
+playBotBtn.addEventListener('click', () => {
+  playerName = playerNameInput.value.trim() || "Người chơi";
+  roomCode = 'bot_' + Math.random().toString(36).substr(2, 6);
+  // Gửi yêu cầu tạo phòng BOT
+  socket.emit('createBotRoom', { room: roomCode, playerName });
+  enterGame();
+});
 init();
